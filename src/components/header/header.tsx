@@ -1,6 +1,5 @@
 import "./header.scss";
-import { Routes,Route } from "react-router-dom";
-import Loginpage from "../../pages/loginpage";
+import { NavLink } from "react-router-dom";
 
 
 
@@ -9,17 +8,27 @@ export default function header(){
         <header className='header'>
     
       <h1>Amazon</h1>
-      <input 
+      {/* <input 
       type='text'
-      placeholder='search'/>
+      placeholder='search'/> */}
       <div>
+      <button>
+            <a href="/">home</a>
+        </button>
+
         <button>
             <a href="/Loginpage">log in</a>
         </button>
         <button>
-        <a href="/Loginpage">sign in</a>
+        <a href="/Register">sign in</a>
         </button>
+       <button>
+        <a href="">
+          <i>cart (0)</i>
+        </a>
+       </button>
       </div>
+      
       
     </header>
     )

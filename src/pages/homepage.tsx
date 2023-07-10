@@ -1,11 +1,13 @@
 import Header from "../components/header/header";
+import Productspage from "./productspage";
 
 
 export default function homepage(){
     return (
         <div> 
             <Header/>
-            <h2>homepage</h2>
+            <Productspage/>
+            
         </div>
     )
 }

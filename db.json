@@ -1,0 +1,119 @@
+{
+  "user": [
+    {
+      "id": "nika",
+      "name": "nika",
+      "password": "admin",
+      "email": "nikagvinjo@gmail.com",
+      "country": "Georgia",
+      "role": "admin",
+      "gender": "male"
+    },
+    {
+      "id": "ntuser",
+      "name": "Fullname",
+      "password": "ntuser",
+      "email": "email@email.com",
+      "country": "usa",
+      "role": "user",
+      "gender": "male"
+    },
+    {
+      "id": "nika2",
+      "name": "nikanika2",
+      "password": "vigac222!",
+      "email": "vigac@gmail.com",
+      "country": "india",
+      "gender": "male"
+    },
+    {
+      "id": "vigac2",
+      "name": "vigac33",
+      "password": "vigac333!",
+      "email": "aravigac@gmail.com",
+      "country": "india",
+      "gender": "male"
+    },
+    {
+      "id": "nika3",
+      "name": "nikanika",
+      "password": "Shakabu123!",
+      "email": "asdasd@gmail.com",
+      "country": "india",
+      "gender": "female"
+    },
+    {
+      "id": "lasha",
+      "name": "lashaa",
+      "password": "Lasha123!",
+      "email": "lashaaaa@gmail.com",
+      "country": "india",
+      "gender": "female"
+    },
+    {
+      "id": "saba",
+      "name": "sabasaba",
+      "password": "Saba123!",
+      "email": "sabasaba@gmail.com",
+      "country": "india",
+      "gender": "male"
+    }
+  ],
+  "roleaccess": [
+    {
+      "role": "admin",
+      "menu": "customer",
+      "haveadd": true,
+      "haveedit": true,
+      "havedelete": true
+    },
+    {
+      "role": "admin",
+      "menu": "supplier",
+      "haveadd": true,
+      "haveedit": true,
+      "havedelete": true
+    },
+    {
+      "role": "user",
+      "menu": "customer",
+      "haveadd": false,
+      "haveedit": false,
+      "havedelete": false
+    },
+    {
+      "role": "user1",
+      "menu": "customer",
+      "haveadd": false,
+      "haveedit": false,
+      "havedelete": false
+    }
+  ],
+  "customer": [
+    {
+      "code": 1,
+      "name": "Chris",
+      "email": "chris@in.com"
+    },
+    {
+      "code": 2,
+      "name": "Lynn",
+      "email": "lynn@in.com"
+    },
+    {
+      "code": 3,
+      "name": "Tim",
+      "email": "tim@in.com"
+    },
+    {
+      "code": 4,
+      "name": "Southee",
+      "email": "southee@in.com"
+    },
+    {
+      "code": 5,
+      "name": "boult",
+      "email": "bould@in.com"
+    }
+  ]
+}

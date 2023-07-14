@@ -4,6 +4,10 @@ import { NavLink } from "react-router-dom";
 
 
 export default function header(){
+  const handleclick = ()=>{
+    localStorage.clear()
+    window.location.reload()
+  }
     return (
         <header className='header'>
     
@@ -22,11 +26,8 @@ export default function header(){
         <button>
         <a href="/Register">sign in</a>
         </button>
-       <button>
-        <a href="">
-          <i>cart (0)</i>
-        </a>
-       </button>
+       
+       <button  className="logout"onClick={handleclick}>logout  </button>
       </div>
       
       

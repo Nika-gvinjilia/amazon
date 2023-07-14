@@ -1,6 +1,5 @@
 import Header from '../components/header/header';
 import React, { useEffect, useState } from 'react';
-import { UseSelector, } from 'react-redux/es/hooks/useSelector';
 import { useDispatch } from 'react-redux/es/exports';
 import { addCart } from '../redux/action';
 import { useParams } from 'react-router-dom';
@@ -26,7 +25,7 @@ const ProductPage: React.FC = () => {
 
   const dispatch = useDispatch();
   const addProduct = (product:any) =>{
-    dispatch(addCart(product))
+    dispatch(addCart(product));
   }
 
   useEffect(() => {
@@ -73,12 +72,12 @@ const ProductPage: React.FC = () => {
         <p className="lead">
           {product.description}
         </p>
-        <button className="btn btn-outline-dark">
-          add to cart
+        <button className="btn btn-outline-dark" onClick={()=>{addProduct(product)}}>
+          buy now
         </button>
-        <NavLink to={"/cart"} className="btn  btn-dark">
+        {/* <NavLink to={"/cart"} className="btn  btn-dark">
           go to cart
-        </NavLink >
+        </NavLink > */}
       </div>
       </>
     );

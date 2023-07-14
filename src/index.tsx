@@ -6,7 +6,8 @@ import reportWebVitals from './reportWebVitals';
 import "../node_modules/bootstrap/dist/css/bootstrap.min.css"
 import 'react-toastify/dist/ReactToastify.css';
 import { Provider } from 'react-redux';
-import store from './redux/store';
+import store from "./redux/store";
+
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement

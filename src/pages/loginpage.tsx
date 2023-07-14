@@ -1,98 +1,121 @@
 
+import { useRef, useState, useEffect, useContext, FormEvent } from 'react';
+import AuthContext from "../context/AuthProvidex";
+import { NavLink } from 'react-router-dom';
 
-import React, { FormEvent, useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+// import axios, { AxiosResponse } from 'axios';
+import axios, { AxiosResponse } from 'axios';
 
-const Login: React.FC = () => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const navigate = useNavigate();
+const LOGIN_URL = 'https://jsonplaceholder.typicode.com/posts';
+
+const Login = () => {
+  const { setAuth } = useContext(AuthContext);
+  const userRef = useRef<HTMLInputElement>(null);
+  const errRef = useRef<HTMLParagraphElement>(null);
+
+  const [user, setUser] = useState<string>('');
+  const [pwd, setPwd] = useState<string>('');
+  const [errMsg, setErrMsg] = useState<string>('');
+  const [success, setSuccess] = useState<boolean>(false);
 
   useEffect(() => {
-    sessionStorage.clear();
+    if (userRef.current) {
+      userRef.current.focus();
+    }
   }, []);
 
-  const proceedLogin = (e: FormEvent) => {
-    e.preventDefault();
-    if (validate()) {
-      fetch(`http://localhost:3030/user?username=${username}`)
-        .then((res) => res.json())
-        .then((resp) => {
-          if (Object.keys(resp).length === 0) {
-            toast.error("Please enter a valid username");
-          } else {
-            if (resp.password === password) {
-              toast.success("Success");
-              sessionStorage.setItem("username", username);
-              sessionStorage.setItem("userrole", resp.role);
-              navigate("/");
-            } else {
-              toast.error("Please enter a valid password");
-            }
-          }
-        })
-        .catch((err) => {
-          toast.error("Login failed due to: " + err.message);
-        });
-    }
-  };
+  useEffect(() => {
+    setErrMsg('');
+  }, [user, pwd]);
 
-  const validate = (): boolean => {
-    let result = true;
-    if (username === "" || username === null) {
-      result = false;
-      toast.warning("Please enter your username");
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+
+    try {
+      const response: AxiosResponse<any> = await axios.post(
+        LOGIN_URL,
+        JSON.stringify({ user, pwd }),
+        {
+          headers: { 'Content-Type': 'application/json' },
+          withCredentials: true,
+        }
+      );
+      console.log(JSON.stringify(response.data));
+      const accessToken: string = response.data.accessToken;
+      const roles: string[] = response.data.roles;
+      setAuth({ user, pwd, roles, accessToken });
+      setUser('');
+      setPwd('');
+      setSuccess(true);
+    } catch (err: any) {
+      if (!err.response) {
+        setErrMsg('No Server Response');
+      } else if (err.response.status === 400) {
+        setErrMsg('Missing Username or Password');
+      } else if (err.response.status === 401) {
+        setErrMsg('Unauthorized');
+      } else {
+        setErrMsg('Login Failed');
+      }
+      if (errRef.current) {
+        errRef.current.focus();
+      }
     }
-    if (password === "" || password === null) {
-      result = false;
-      toast.warning("Please enter your password");
-    }
-    return result;
   };
 
   return (
-    <div className="row">
-      <div className="offset-lg-3 col-lg-6" style={{ marginTop: "100px" }}>
-        <form onSubmit={proceedLogin} className="container">
-          <div className="card">
-            <div className="card-header">
-              <h2>User Login</h2>
-            </div>
-            <div className="card-body">
-              <div className="form-group">
-                <label>User Name</label>
-                <input
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  className="form-control"
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label>Password</label>
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="form-control"
-                  required
-                />
-              </div>
-            </div>
-            <div className="card-footer">
-              <button type="submit" className="btn btn-primary">
-                Login
-              </button>{" "}
-              |
-              <Link className="btn btn-success" to="/register">
-                New User
-              </Link>
-            </div>
-          </div>
-        </form>
-      </div>
-    </div>
+    <>
+      {success ? (
+        <section>
+          <h1>You are logged in!</h1>
+          <br />
+          <p>
+            <a href="/">Go to Home</a>
+          </p>
+        </section>
+      ) : (
+        <section>
+          <p
+            ref={errRef}
+            className={errMsg ? 'errmsg' : 'offscreen'}
+            aria-live="assertive"
+          >
+            {errMsg}
+          </p>
+          <h1>Sign In</h1>
+          <form onSubmit={handleSubmit}>
+            <label htmlFor="username">Username:</label>
+            <input
+              type="text"
+              id="username"
+              ref={userRef}
+              autoComplete="off"
+              onChange={(e) => setUser(e.target.value)}
+              value={user}
+              required
+            />
+
+            <label htmlFor="password">Password:</label>
+            <input
+              type="password"
+              id="password"
+              onChange={(e) => setPwd(e.target.value)}
+              value={pwd}
+              required
+            />
+            <button type="submit">Sign In</button>
+          </form>
+          <p>
+            Need an Account?<br />
+            <span className="line">
+              {/* put router link here */}
+              <a href="#">Sign Up</a>
+            </span>
+          </p>
+          <NavLink to={"/"}>home</NavLink>
+        </section>
+      )}
+    </>
   );
 };
 

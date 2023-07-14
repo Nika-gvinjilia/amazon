@@ -1,334 +1,193 @@
 
+import { useRef, useState, useEffect, FormEvent, HtmlHTMLAttributes } from "react";
+import { faCheck, faTimes, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import axios from 'axios';
+import { NavLink } from "react-router-dom";
 
-// import { FormEvent } from 'react';
+const USER_REGEX = /^[A-z][A-z0-9-_]{3,23}$/;
+const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
+const REGISTER_URL = 'https://jsonplaceholder.typicode.com/posts';
 
-// import { useState } from "react";
-// import { Link, useNavigate } from "react-router-dom";
-// import { toast } from "react-toastify";
+const Register = () => {
+  const userRef = useRef<HTMLInputElement>(null);
+  const errRef = useRef<HTMLParagraphElement>(null);
 
-// const Register = () => {
+  const [user, setUser] = useState('');
+  const [validName, setValidName] = useState(false);
+  const [userFocus, setUserFocus] = useState(false);
 
-//     const [id, idchange] = useState("");
-//     const [name, namechange] = useState("");
-//     const [password, passwordchange] = useState("");
-//     const [email, emailchange] = useState("");
-//     // const [phone, phonechange] = useState("");
-//     const [country, countrychange] = useState("india");
-//     // const [address, addresschange] = useState("");
-//     const [gender, genderchange] = useState("female");
+  const [pwd, setPwd] = useState('');
+  const [validPwd, setValidPwd] = useState(false);
+  const [pwdFocus, setPwdFocus] = useState(false);
 
-//     const navigate = useNavigate();
+  const [matchPwd, setMatchPwd] = useState('');
+  const [validMatch, setValidMatch] = useState(false);
+  const [matchFocus, setMatchFocus] = useState(false);
 
-//     const IsValidate = () => {
-//         let isproceed = true;
-//         let errormessage = 'Please enter the value in ';
-//         if (id === null || id === '') {
-//             isproceed = false;
-//             errormessage += ' Username';
-//         }
-//         if (name === null || name === '') {
-//             isproceed = false;
-//             errormessage += ' Fullname';
-//         }
-//         if (password === null || password === '') {
-//             isproceed = false;
-//             errormessage += ' Password';
-//         }
-//         if (email === null || email === '') {
-//             isproceed = false;
-//             errormessage += ' Email';
-//         }
+  const [errMsg, setErrMsg] = useState('');
+  const [success, setSuccess] = useState(false);
 
-//         if(!isproceed){
-//             toast.warning(errormessage)
-//         }else{
-//             if(/^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[A-Za-z]+$/.test(email)){
-
-//             }else{
-//                 isproceed = false;
-//                 toast.warning('Please enter the valid email')
-//             }
-//         }
-//         return isproceed;
-//     }
-
-
-//     const handlesubmit = (e:FormEvent) => {
-//             e.preventDefault();
-//             let regobj = { id, name, password, email,  country, gender };
-//             if (IsValidate()) {
-//             //console.log(regobj);
-//             fetch("http://localhost:3030/user", {
-//                 method: "POST",
-//                 headers: { 'content-type': 'application/json' },
-//                 body: JSON.stringify(regobj)
-//             }).then((res) => {
-//                 toast.success('Registered successfully.')
-//                 navigate('/Loginpage');
-//             }).catch((err) => {
-//                 toast.error('Failed :' + err.message);
-//             });
-//         }
-//     }
-//     return (
-//         <div>
-//             <div className="offset-lg-3 col-lg-6">
-//                 <form className="container" onSubmit={handlesubmit}>
-//                     <div className="card">
-//                         <div className="card-header">
-//                             <h1>User Registeration</h1>
-//                         </div>
-//                         <div className="card-body">
-
-//                             <div className="row">
-//                                 <div className="col-lg-6">
-//                                     <div className="form-group">
-//                                         <label>User Name <span className="errmsg">*</span></label>
-//                                         <input value={id} onChange={e => idchange(e.target.value)} className="form-control"></input>
-//                                     </div>
-//                                 </div>
-//                                 <div className="col-lg-6">
-//                                     <div className="form-group">
-//                                         <label>Password <span className="errmsg">*</span></label>
-//                                         <input value={password} onChange={e => passwordchange(e.target.value)} type="password" className="form-control"></input>
-//                                     </div>
-//                                 </div>
-//                                 <div className="col-lg-6">
-//                                     <div className="form-group">
-//                                         <label>Full Name <span className="errmsg">*</span></label>
-//                                         <input value={name} onChange={e => namechange(e.target.value)} className="form-control"></input>
-//                                     </div>
-//                                 </div>
-//                                 <div className="col-lg-6">
-//                                     <div className="form-group">
-//                                         <label>Email <span className="errmsg">*</span></label>
-//                                         <input value={email} onChange={e => emailchange(e.target.value)} className="form-control"></input>
-//                                     </div>
-//                                 </div>
-//                                 {/* <div className="col-lg-6">
-//                                     <div className="form-group">
-//                                         <label>Phone <span className="errmsg"></span></label>
-//                                         <input value={phone} onChange={e => phonechange(e.target.value)} className="form-control"></input>
-//                                     </div>
-//                                 </div> */}
-//                                 <div className="col-lg-6">
-//                                     <div className="form-group">
-//                                         <label>Country <span className="errmsg">*</span></label>
-//                                         <select value={country} onChange={e => countrychange(e.target.value)} className="form-control">
-//                                             <option value="india">Georgia</option>
-//                                             <option value="usa">USA</option>
-//                                         </select>
-//                                     </div>
-//                                 </div>
-//                                 {/* <div className="col-lg-12">
-//                                     <div className="form-group">
-//                                         <label>Address</label>
-//                                         <textarea value={address} onChange={e => addresschange(e.target.value)} className="form-control"></textarea>
-//                                     </div>
-//                                 </div> */}
-//                                 <div className="col-lg-6">
-//                                     <div className="form-group">
-//                                         <label>Gender</label>
-//                                         <br></br>
-//                                         <input type="radio" checked={gender === 'male'} onChange={e => genderchange(e.target.value)} name="gender" value="male" className="app-check"></input>
-//                                         <label>Male</label>
-//                                         <input type="radio" checked={gender === 'female'} onChange={e => genderchange(e.target.value)} name="gender" value="female" className="app-check"></input>
-//                                         <label>Female</label>
-//                                     </div>
-//                                 </div>
-
-//                             </div>
-
-//                         </div>
-//                         <div className="card-footer">
-//                             <button type="submit" className="btn btn-dark ">
-//                                 submit</button> |
-//                             <Link to={"/"} className="btn btn-danger">Close</Link>
-//                         </div>
-//                     </div>
-//                 </form>
-//             </div>
-
-
-//         </div>
-//     );
-// }
-
-// export default Register;
-import React, { FormEvent, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
-
-const Register: React.FC = () => {
-  const [id, setId] = useState("");
-  const [name, setName] = useState("");
-  const [password, setPassword] = useState("");
-  const [email, setEmail] = useState("");
-  const [country, setCountry] = useState("india");
-  const [gender, setGender] = useState("female");
-
-  const navigate = useNavigate();
-
-  const isValidate = (): boolean => {
-    let isProceed = true;
-    let errorMessage = "Please enter a value in";
-    if (!id) {
-      isProceed = false;
-      errorMessage += " Username";
+  useEffect(() => {
+    if (userRef.current) {
+      userRef.current.focus();
     }
-    if (!name) {
-      isProceed = false;
-      errorMessage += " Fullname";
-    }
-    if (!password) {
-      isProceed = false;
-      errorMessage += " Password";
-    }
-    if (!email) {
-      isProceed = false;
-      errorMessage += " Email";
-    }
-    if (!isProceed) {
-      toast.warning(errorMessage);
-    } else {
-      if (!/^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[A-Za-z]+$/.test(email)) {
-        isProceed = false;
-        toast.warning("Please enter a valid email");
-      }
-    }
-    return isProceed;
-  };
+  }, []);
 
-  const handleSubmit = (e: FormEvent) => {
+  useEffect(() => {
+    setValidName(USER_REGEX.test(user));
+  }, [user]);
+
+  useEffect(() => {
+    setValidPwd(PWD_REGEX.test(pwd));
+    setValidMatch(pwd === matchPwd);
+  }, [pwd, matchPwd]);
+
+  useEffect(() => {
+    setErrMsg('');
+  }, [user, pwd, matchPwd]);
+
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    let regObj = {
-      id,
-      name,
-      password,
-      email,
-      country,
-      gender,
-    };
-    if (isValidate()) {
-      fetch("http://localhost:3030/user", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify(regObj),
-      })
-        .then((res) => {
-          toast.success("Registered successfully.");
-          navigate("/Loginpage");
-        })
-        .catch((err) => {
-          toast.error("Failed: " + err.message);
-        });
+    // if button enabled with JS hack
+    const v1 = USER_REGEX.test(user);
+    const v2 = PWD_REGEX.test(pwd);
+    if (!v1 || !v2) {
+      setErrMsg("Invalid Entry");
+      return;
+    }
+    try {
+      const response = await axios.post(
+        REGISTER_URL,
+        JSON.stringify({ user, pwd }),
+        {
+          headers: { 'Content-Type': 'application/json' },
+          withCredentials: true
+        }
+      );
+      // Handle the response
+      // console.log(response.data);
+      // console.log(response.accessToken);
+      // console.log(JSON.stringify(response));
+      setSuccess(true);
+      //clear state and controlled inputs
+      //need value attrib on inputs for this
+      setUser('');
+      setPwd('');
+      setMatchPwd('');
+    } catch (err: any) {
+      if (!err.response) {
+        setErrMsg('No Server Response');
+      } else if (err.response.status === 409) {
+        setErrMsg('Username Taken');
+      } else {
+        setErrMsg('Registration Failed');
+      }
+      if (errRef.current) {
+        errRef.current.focus();
+      }
     }
   };
 
   return (
-    <div>
-      <div className="offset-lg-3 col-lg-6">
-        <form className="container" onSubmit={handleSubmit}>
-          <div className="card">
-            <div className="card-header">
-              <h1>User Registration</h1>
-            </div>
-            <div className="card-body">
-              <div className="row">
-                <div className="col-lg-6">
-                  <div className="form-group">
-                    <label>User Name</label>
-                    <input
-                      value={id}
-                      onChange={(e) => setId(e.target.value)}
-                      className="form-control"
-                    />
-                  </div>
-                </div>
-                <div className="col-lg-6">
-                  <div className="form-group">
-                    <label>Password</label>
-                    <input
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      type="password"
-                      className="form-control"
-                    />
-                  </div>
-                </div>
-                <div className="col-lg-6">
-                  <div className="form-group">
-                    <label>Full Name</label>
-                    <input
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      className="form-control"
-                    />
-                  </div>
-                </div>
-                <div className="col-lg-6">
-                  <div className="form-group">
-                    <label>Email</label>
-                    <input
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="form-control"
-                    />
-                  </div>
-                </div>
-                <div className="col-lg-6">
-                  <div className="form-group">
-                    <label>Country</label>
-                    <select
-                      value={country}
-                      onChange={(e) => setCountry(e.target.value)}
-                      className="form-control"
-                    >
-                      <option value="india">Georgia</option>
-                      <option value="usa">USA</option>
-                    </select>
-                  </div>
-                </div>
-                <div className="col-lg-6">
-                  <div className="form-group">
-                    <label>Gender</label>
-                    <br />
-                    <input
-                      type="radio"
-                      checked={gender === "male"}
-                      onChange={() => setGender("male")}
-                      name="gender"
-                      value="male"
-                      className="app-check"
-                    />
-                    <label>Male</label>
-                    <input
-                      type="radio"
-                      checked={gender === "female"}
-                      onChange={() => setGender("female")}
-                      name="gender"
-                      value="female"
-                      className="app-check"
-                    />
-                    <label>Female</label>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="card-footer">
-              <button type="submit" className="btn btn-dark">
-                Submit
-              </button>{" "}
-              |
-              <Link to={"/"} className="btn btn-danger">
-                Close
-              </Link>
-            </div>
-          </div>
-        </form>
-      </div>
-    </div>
-  );
-};
+    <>
+      {success ? (
+        <section>
+          <h1>Success!</h1>
+          <p>
+            <a href="/loginpage">Sign In</a>
+          </p>
+        </section>
+      ) : (
+        <section>
+          <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p>
+          <h1>Register</h1>
+          <form onSubmit={handleSubmit}>
+            <label htmlFor="username">
+              Username:
+              <FontAwesomeIcon icon={faCheck} className={validName ? "valid" : "hide"} />
+              <FontAwesomeIcon icon={faTimes} className={validName || !user ? "hide" : "invalid"} />
+            </label>
+            <input
+              type="text"
+              id="username"
+              ref={userRef}
+              autoComplete="off"
+              onChange={(e) => setUser(e.target.value)}
+              value={user}
+              required
+              aria-invalid={validName ? "false" : "true"}
+              aria-describedby="uidnote"
+              onFocus={() => setUserFocus(true)}
+              onBlur={() => setUserFocus(false)}
+            />
+            <p id="uidnote" className={userFocus && user && !validName ? "instructions" : "offscreen"}>
+              <FontAwesomeIcon icon={faInfoCircle} />
+              4 to 24 characters.<br />
+              Must begin with a letter.<br />
+              Letters, numbers, underscores, hyphens allowed.
+            </p>
 
-export default Register;
+
+            <label htmlFor="password">
+              Password:
+              <FontAwesomeIcon icon={faCheck} className={validPwd ? "valid" : "hide"} />
+              <FontAwesomeIcon icon={faTimes} className={validPwd || !pwd ? "hide" : "invalid"} />
+            </label>
+            <input
+              type="password"
+              id="password"
+              onChange={(e) => setPwd(e.target.value)}
+              value={pwd}
+              required
+              aria-invalid={validPwd ? "false" : "true"}
+              aria-describedby="pwdnote"
+              onFocus={() => setPwdFocus(true)}
+              onBlur={() => setPwdFocus(false)}
+            />
+            <p id="pwdnote" className={pwdFocus && !validPwd ? "instructions" : "offscreen"}>
+              <FontAwesomeIcon icon={faInfoCircle} />
+              8 to 24 characters.<br />
+              Must include uppercase and lowercase letters, a number and a special character.<br />
+              Allowed special characters: <span aria-label="exclamation mark">!</span> <span aria-label="at symbol">@</span> <span aria-label="hashtag">#</span> <span aria-label="dollar sign">$</span> <span aria-label="percent">%</span>
+            </p>
+
+
+            <label htmlFor="confirm_pwd">
+              Confirm Password:
+              <FontAwesomeIcon icon={faCheck} className={validMatch && matchPwd ? "valid" : "hide"} />
+              <FontAwesomeIcon icon={faTimes} className={validMatch || !matchPwd ? "hide" : "invalid"} />
+            </label>
+            <input
+              type="password"
+              id="confirm_pwd"
+              onChange={(e) => setMatchPwd(e.target.value)}
+              value={matchPwd}
+              required
+              aria-invalid={validMatch ? "false" : "true"}
+              aria-describedby="confirmnote"
+              onFocus={() => setMatchFocus(true)}
+              onBlur={() => setMatchFocus(false)}
+            />
+            <p id="confirmnote" className={matchFocus && !validMatch ? "instructions" : "offscreen"}>
+              <FontAwesomeIcon icon={faInfoCircle} />
+              Must match the first password input field.
+            </p>
+
+            <button disabled={!validName || !validPwd || !validMatch}>Sign Up</button>
+          </form>
+          <p>
+            Already registered?<br />
+                        <span className="line">
+                            {/*put router link here*/}
+                            <a href="#">Sign In</a>
+                        </span>
+                    </p>
+                    <NavLink to={"/"}>home</NavLink>
+                </section>
+            )}
+        </>
+    )
+}
+
+export default Register

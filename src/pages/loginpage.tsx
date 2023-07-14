@@ -109,7 +109,7 @@ const Login = () => {
             Need an Account?<br />
             <span className="line">
               {/* put router link here */}
-              <a href="#">Sign Up</a>
+              <a href="/Register">Sign Up</a>
             </span>
           </p>
           <NavLink to={"/"}>home</NavLink>
